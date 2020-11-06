@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <h4>Your API KEY Below:</h4>
+        <h6>Token expires in 1 hour!</h6>
+        <textarea>
+            {{ token }}
+        </textarea>
+        <!-- TODO: ADD REFRESH TOKEN BUTTON, AFTER initial steps to view API on browser were taken. 
+        this button was later added.   -->
+        <a href="{{ url_for('refresh_key') }}">
+            <button class="btn btn-success">Get New Token</button>
+        </a>
+     
+    </div>
+
+{% endblock content %}

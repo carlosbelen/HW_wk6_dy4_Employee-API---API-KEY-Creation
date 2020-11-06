@@ -9,11 +9,14 @@ from flask_login import login_required, login_user, current_user, logout_user
 # Import for PyJWT (Json Web Token)
 import jwt
 
-from flask_api.forms import UserForm, LoginForm
+from flask_employee_api.forms import UserForm, LoginForm
+
+from flask_employee_api.token_verification import token_required
 
 
 # Endpoint for Creating employees
 @app.route('/employees/create', methods = ['POST'])
+@token_required
 def create_employee():
     name = request.json['full_name']
     gender = request.json['gender']
@@ -31,6 +34,7 @@ def create_employee():
 
 # Endpoint for all employees
 @app.route('/employees', methods = ['Get'])
+@token_required
 def get_employees():
     employees = Employee.query.all()
     # '.dump' does serialization. 
@@ -38,6 +42,7 @@ def get_employees():
 
 # Endpoint for ONE employee based on their ID
 @app.route('/employees/<id>', methods = ['GET'])
+@token_required
 def get_employee(id):
     employee = Employee.query.get(id)
     results = employee_schema.dump(employee)
@@ -45,6 +50,7 @@ def get_employee(id):
 
 # Endpoint for updating employee data
 @app.route('/employees/update/<id>', methods = ['POST', 'PUT'])
+@token_required
 def update_employee(id):
     employee = Employee.query.get(id)
 
@@ -61,6 +67,7 @@ def update_employee(id):
 
 # Endpoint for deleting employee data
 @app.route('/employees/delete/<id>', methods = ['DELETE'])
+@token_required
 def delete_employee(id):
     employee = Employee.query.get(id)
 
@@ -117,3 +124,19 @@ def get_key():
     #un-codes the coding to present it back to the user:
     results = token.decode('utf-8')
     return render_template('token.html', token = results)
+
+# Get a new API Key
+@app.route('/users/updatekey', methods = ['GET', 'POST', 'PUT'])
+def refresh_key():
+    refresh_key = {'refreshToken': jwt.encode({'public_id': current_user.id, 'email': current_user.email}, app.config['SECRET_KEY'])}
+    temp = refresh_key.get('refreshToken')
+    new_token = temp.decode('utf-8')
+
+    # Adding Refreshed Token to DB
+    user = User.query.filter_by(email = current_user.email).first()
+    user.token = token
+
+    db.session.add(user)
+    db.session.commit()
+    
+    return render_template('token_refresh.html', new_token = new_token)

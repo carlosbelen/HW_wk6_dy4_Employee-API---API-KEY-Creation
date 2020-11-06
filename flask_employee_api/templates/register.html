@@ -1,8 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <div class="container">
+        <h1>Please Register Below</h1>
+        <h3>Once completed you will be redirected to the login page</h3>
+        <h3>After logging in, you will be granted an API token</h3>
+
+
+        <form method = 'POST'>
+            {{ user_form.hidden_tag() }}
+            <div class="form-group">
+                <fieldset>
+                    {{ user_form.name.label }}
+                    {{ user_form.name(class = 'form-control', placeholder = "Full Name Here") }}
+                </fieldset>
+                <fieldset>
+                    {{ user_form.email.label }}
+                    {{ user_form.email(class = 'form-control', placeholder = 'Email Here') }}
+                </fieldset>
+                <fieldset>
+                    {{ user_form.password.label }}
+                    {{ user_form.password(class = 'form-control', placeholder = 'Password Here') }}
+                </fieldset>
+                <fieldset>
+                    {{ user_form.confirm_pass.label }}
+                    {{ user_form.confirm_pass(class = 'form-control', placeholder = 'Confirm Your Password') }}
+                </fieldset>
+                {{ user_form.submit(class = 'btn btn-success') }}
+            </div>
+        </form>
+    </div>
 
 
 
-
-{% endblcok content %}
+{% endblock content %}

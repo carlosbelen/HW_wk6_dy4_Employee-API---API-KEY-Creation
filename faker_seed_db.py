@@ -19,4 +19,4 @@ def seedData():
         db.session.add(employee)
         db.session.commit()
 
-seedData()
+# seedData()
